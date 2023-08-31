@@ -37,9 +37,6 @@ void setup()
       Serial.println("true)");
     else
       Serial.println("false");
-    Serial.println("Try out all the buttons, X will vibrate the controller, faster as you press harder;");
-    Serial.println("holding L1 or R1 will print out the analog stick values.");
-    Serial.println("Note: Go to www.billporter.info for updates and to report bugs.");
   }
   else if (error == 1)
     Serial.println("No controller found, check wiring");
