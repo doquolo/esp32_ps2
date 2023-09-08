@@ -39,7 +39,7 @@ struct ps2_data {
 	bool Start, Select;
 } ps2;
 
-void parse(String incoming_data) {
+void parse(String incoming_data) { //tested 4ms max
 	// analog
 	ps2.LX = (incoming_data.substring(1, 4)).toInt();
 	ps2.LY = (incoming_data.substring(4, 7)).toInt();
@@ -48,25 +48,26 @@ void parse(String incoming_data) {
 
 	// button
 	// shoulder button
-	ps2.L1 = (incoming_data.substring(13, 14)).toInt();
-	ps2.R1 = (incoming_data.substring(14, 15)).toInt();
-	ps2.L2 = (incoming_data.substring(15, 16)).toInt();
-	ps2.R2 = (incoming_data.substring(16, 17)).toInt();
-	ps2.L3 = (incoming_data.substring(17, 18)).toInt();
-	ps2.R3 = (incoming_data.substring(18, 19)).toInt();
+	ps2.L1 = incoming_data[13] - '0';
+	ps2.R1 = incoming_data[14] - '0';
+	ps2.L2 = incoming_data[15] - '0';
+	ps2.R2 = incoming_data[16] - '0';
+	ps2.L3 = incoming_data[17] - '0';
+	ps2.R3 = incoming_data[18] - '0';
+
 	// dpad 
-	ps2.Up = (incoming_data.substring(19, 20)).toInt();
-	ps2.Down = (incoming_data.substring(20, 21)).toInt();
-	ps2.Left = (incoming_data.substring(21, 22)).toInt();
-	ps2.Right = (incoming_data.substring(22, 23)).toInt();
+	ps2.Up = incoming_data[19] - '0';
+	ps2.Down = incoming_data[20] - '0';
+	ps2.Left = incoming_data[21] - '0';
+	ps2.Right = incoming_data[22] - '0';
 	// start/sel
-	ps2.Start = (incoming_data.substring(23, 24)).toInt();
-	ps2.Select = (incoming_data.substring(24, 25)).toInt();
+	ps2.Start = incoming_data[23] - '0';
+	ps2.Select = incoming_data[24] - '0';
 	// // function button
-	ps2.Triangle = (incoming_data.substring(25, 26)).toInt();
-	ps2.Cross = (incoming_data.substring(26, 27)).toInt();
-	ps2.Square = (incoming_data.substring(27, 28)).toInt();
-	ps2.Circle = (incoming_data.substring(28, 29)).toInt();
+	ps2.Triangle = incoming_data[25] - '0';
+	ps2.Cross = incoming_data[26] - '0';
+	ps2.Square = incoming_data[27] - '0';
+	ps2.Circle = incoming_data[28] - '0';
 }
 
 void printStruct(ps2_data ps2) {
@@ -116,7 +117,7 @@ void loop() {
 		if (serial_in[0] == 70) { // verify packet
 			parse(serial_in);
 			Serial.println(serial_in);
-			printStruct(ps2);
+			// printStruct(ps2);
 			// delay(100);
 		}
 	}
