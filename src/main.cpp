@@ -1,4 +1,30 @@
 #include <Arduino.h>
+#include "BluetoothSerial.h"
+
+#if !defined(CONFIG_BT_ENABLED) || !defined(CONFIG_BLUEDROID_ENABLED)
+#error Bluetooth is not enabled! Please run `make menuconfig` to and enable it
+#endif
+
+#if !defined(CONFIG_BT_SPP_ENABLED)
+#error Serial Bluetooth not available or not enabled. It is only available for the ESP32 chip.
+#endif
+
+BluetoothSerial SerialBT;
+uint8_t receiver_end[6] = {0xB0, 0xA7, 0x32, 0xD7, 0x84, 0x1E};
+boolean confirmRequestPending = true;
+
+void BTAuthCompleteCallback(boolean success)
+{
+  confirmRequestPending = false;
+  if (success)
+  {
+    Serial.println("Pairing success!!");
+  }
+  else
+  {
+    Serial.println("Pairing failed, rejected by user!!");
+  }
+}
 
 struct ps2_data {
 	// analog
@@ -72,16 +98,25 @@ void printStruct(ps2_data ps2) {
 
 void setup() {
 	Serial.begin(115200);
+	SerialBT.onAuthComplete(BTAuthCompleteCallback);
+	SerialBT.begin("", true);
+	Serial.println("Connecting...");
+	bool connected = SerialBT.connect(receiver_end);
+	if (connected) {
+		Serial.println("Connected!");
+	} else {
+		Serial.println("NOT Connected!");
+	}
 }
 
 void loop() {
-	if (Serial.available() > 0) {
-		String serial_in = Serial.readStringUntil('\n');
+	if (SerialBT.available() > 0) {
+		String serial_in = SerialBT.readStringUntil('\n');
 		serial_in.trim();
 		if (serial_in[0] == 70) { // verify packet
 			parse(serial_in);
 			Serial.println(serial_in);
-			// printStruct(ps2);
+			printStruct(ps2);
 			// delay(100);
 		}
 	}
